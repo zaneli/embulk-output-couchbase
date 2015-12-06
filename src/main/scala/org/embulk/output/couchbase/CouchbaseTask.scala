@@ -1,7 +1,7 @@
 package org.embulk.output.couchbase
 
 import com.google.common.base.Optional
-import org.embulk.config.{Config, ConfigDefault, Task}
+import org.embulk.config.{Config, ConfigDefault, ConfigException, Task}
 
 trait PluginTask extends Task {
   @Config("host")
@@ -44,7 +44,16 @@ object CouchbaseTask {
       task.getBucket,
       task.getIdColumn,
       task.getIdFormat.asScala,
-      task.getWriteMode.asScala.flatMap(WriteMode.of).getOrElse(WriteMode.Insert)
+      task.getWriteMode.asScala.map(WriteMode.of).getOrElse(WriteMode.Insert)
     )
+  }
+
+  def checkConfig(task: PluginTask): Unit = {
+    task.getIdFormat.asScala.foreach { format =>
+      if (!format.contains("{id}")) {
+        throw new ConfigException(s"Invalid id_format '$format'. must contains '{id}'")
+      }
+    }
+    task.getWriteMode.asScala.foreach(WriteMode.of)
   }
 }

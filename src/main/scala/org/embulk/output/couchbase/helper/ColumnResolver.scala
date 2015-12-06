@@ -21,7 +21,7 @@ class ColumnResolver(idColumn: String, idFormat: Option[String]) {
 
   private[this] def toId(column: ResolvedColumn[_]): String = {
     val id = column.value.toString
-    idFormat.fold(id)(_.replaceAll("""\$\{id\}""", id))
+    idFormat.fold(id)(_.replaceAll("""\{id\}""", id))
   }
 
   private[this] sealed trait ResolvedColumn[A] {
