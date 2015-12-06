@@ -2,32 +2,10 @@ package org.embulk.output.couchbase
 
 import java.util.{List => JList}
 
-import com.google.common.base.Optional
-import org.embulk.config.{Config, ConfigDefault, ConfigDiff, ConfigSource, Task, TaskReport, TaskSource}
+import org.embulk.config.{ConfigDiff, ConfigSource, TaskReport, TaskSource}
 import org.embulk.spi.{Exec, OutputPlugin, Schema, TransactionalPageOutput}
 
 class CouchbaseOutputPlugin extends OutputPlugin {
-
-  trait PluginTask extends Task {
-    @Config("host")
-    @ConfigDefault("null")
-    def getHost: Optional[String]
-
-    @Config("username")
-    def getUserName: String
-    @Config("password")
-    def getPassword: String
-
-    @Config("bucket")
-    @ConfigDefault("null")
-    def getBucket: Optional[String]
-
-    @Config("id_column")
-    def getIdColumn: String
-    @Config("id_format")
-    @ConfigDefault("null")
-    def getIdFormat: Optional[String]
-  }
 
   override def transaction(
     config: ConfigSource, schema: Schema, taskCount: Int, control: OutputPlugin.Control): ConfigDiff = {
