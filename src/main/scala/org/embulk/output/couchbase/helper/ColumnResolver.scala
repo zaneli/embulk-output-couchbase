@@ -3,6 +3,7 @@ package org.embulk.output.couchbase.helper
 import com.couchbase.client.java.document.JsonDocument
 import com.couchbase.client.java.document.json.JsonObject
 import org.embulk.spi.{Column, PageReader}
+import org.embulk.spi.`type`.Types.{BOOLEAN, DOUBLE, LONG, STRING, TIMESTAMP}
 
 class ColumnResolver(idColumn: String, idFormat: Option[String]) {
 
@@ -11,11 +12,11 @@ class ColumnResolver(idColumn: String, idFormat: Option[String]) {
       idColumn <- columns.find(_.getName == idColumn)
       id <- ColumnValue.resolve(reader, idColumn)
     } yield {
-      val json = columns
-        .filterNot(_.getName == idColumn.getName)
+      val content = columns
+        .filterNot(_ == idColumn)
         .flatMap(ColumnValue.resolve(reader, _))
         .foldLeft(JsonObject.create()){ case (j, c) => j.put(c.name, c.value) }
-      JsonDocument.create(toId(id), json)
+      JsonDocument.create(toId(id), content)
     }
   }
 
@@ -33,12 +34,12 @@ class ColumnResolver(idColumn: String, idFormat: Option[String]) {
       if (reader.isNull(column)) {
         None
       } else {
-        PartialFunction.condOpt(column.getType.getName) {
-          case "string" => StringColumn(column.getName, reader.getString(column))
-          case "double" => DoubleColumn(column.getName, reader.getDouble(column))
-          case "long" => LongColumn(column.getName, reader.getLong(column))
-          case "boolean" => BooleanColumn(column.getName, reader.getBoolean(column))
-          case "timestamp" => LongColumn(column.getName, reader.getTimestamp(column).toEpochMilli) // TODO: appropriate type?
+        PartialFunction.condOpt(column.getType) {
+          case STRING => StringColumn(column.getName, reader.getString(column))
+          case DOUBLE => DoubleColumn(column.getName, reader.getDouble(column))
+          case LONG => LongColumn(column.getName, reader.getLong(column))
+          case BOOLEAN => BooleanColumn(column.getName, reader.getBoolean(column))
+          case TIMESTAMP => LongColumn(column.getName, reader.getTimestamp(column).toEpochMilli) // TODO: appropriate type?
         }
       }
     }
