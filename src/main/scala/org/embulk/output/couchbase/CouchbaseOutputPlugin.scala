@@ -9,19 +9,24 @@ import org.embulk.spi.{Exec, OutputPlugin, Schema, TransactionalPageOutput}
 class CouchbaseOutputPlugin extends OutputPlugin {
 
   trait PluginTask extends Task {
-    // configuration option 1 (required integer)
-    @Config("option1")
-    def getOption1: Int
-
-    // configuration option 2 (optional string, null is not allowed)
-    @Config("option2")
-    @ConfigDefault("\"myvalue\"")
-    def getOption2: String
-
-    // configuration option 3 (optional string, null is allowed)
-    @Config("option3")
+    @Config("host")
     @ConfigDefault("null")
-    def getOption3: Optional[String]
+    def getHost: Optional[String]
+
+    @Config("username")
+    def getUserName: String
+    @Config("password")
+    def getPassword: String
+
+    @Config("bucket")
+    @ConfigDefault("null")
+    def getBucket: Optional[String]
+
+    @Config("id_column")
+    def getIdColumn: String
+    @Config("id_format")
+    @ConfigDefault("null")
+    def getIdFormat: Optional[String]
   }
 
   override def transaction(
