@@ -1,5 +1,7 @@
 # Couchbase output plugin for Embulk
 
+[![Build Status](https://api.travis-ci.org/zaneli/embulk-output-couchbase.png?branch=master)](https://travis-ci.org/zaneli/embulk-output-couchbase)
+
 ## Overview
 
 * **Plugin type**: output
