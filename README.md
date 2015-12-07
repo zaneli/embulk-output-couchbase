@@ -1,32 +1,43 @@
 # Couchbase output plugin for Embulk
 
-TODO: Write short description here and build.gradle file.
-
 ## Overview
 
 * **Plugin type**: output
 * **Load all or nothing**: no
 * **Resume supported**: no
-* **Cleanup supported**: yes
+* **Cleanup supported**: no
 
 ## Configuration
 
-- **option1**: description (integer, required)
-- **option2**: description (string, default: `"myvalue"`)
-- **option3**: description (string, default: `null`)
+- **host**: Couchbase Server host. If not provided, connect to localhost. (string, optional)
+- **bucket**: bucket name. If not provided, open the default bucket. (string, optional)
+- **password**: bucket password. If not provided, open the bucket without password. (string, optional)
+- **id_column**: column name to be used as id. (string, required)
+- **id_format**: id value format. It must contains `{id}` placeholder. If not provided, using only id column value itself. (string, optional)
+- **write_mode**: `insert` or `upsert`. (string, default: `insert`)
 
 ## Example
 
 ```yaml
 out:
   type: couchbase
-  option1: example1
-  option2: example2
+  host: 192.168.111.22
+  bucket: embulk_bucket
+  id_column: id
+  id_format: embulk_{id}
+  write_mode: upsert
 ```
-
 
 ## Build
 
 ```
 $ ./gradlew gem  # -t to watch change of files and rebuild continuously
+```
+
+## Test
+
+Start Couchbase Server on the localhost, and prepare 'embulk_spec' bucket without password.
+
+```
+$ ./gradlew test
 ```
