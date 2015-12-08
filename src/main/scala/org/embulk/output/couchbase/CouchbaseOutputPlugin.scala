@@ -12,7 +12,7 @@ class CouchbaseOutputPlugin extends OutputPlugin {
   override def transaction(
     config: ConfigSource, schema: Schema, taskCount: Int, control: OutputPlugin.Control): ConfigDiff = {
     val task = config.loadConfig(classOf[PluginTask])
-    CouchbaseTask.checkConfig(task)
+    CouchbaseTask.checkConfig(task, schema)
     control.run(task.dump()).asScala.foldLeft(Exec.newConfigDiff())(_.merge(_))
   }
 

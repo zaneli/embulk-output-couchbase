@@ -2,6 +2,9 @@ package org.embulk.output.couchbase
 
 import com.google.common.base.Optional
 import org.embulk.config.{Config, ConfigDefault, ConfigException, Task}
+import org.embulk.spi.Schema
+
+import scala.collection.JavaConversions._
 
 trait PluginTask extends Task {
   @Config("host")
@@ -48,7 +51,10 @@ object CouchbaseTask {
     )
   }
 
-  def checkConfig(task: PluginTask): Unit = {
+  def checkConfig(task: PluginTask, schema: Schema): Unit = {
+    if (!schema.getColumns.exists(_.getName == task.getIdColumn)) {
+      throw new ConfigException(s"Invalid id_column '${task.getIdColumn}'. not found.")
+    }
     task.getIdFormat.asScala.foreach { format =>
       if (!format.contains("{id}")) {
         throw new ConfigException(s"Invalid id_format '$format'. must contains '{id}'")

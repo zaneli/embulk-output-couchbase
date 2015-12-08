@@ -146,6 +146,29 @@ class CouchbaseOutputPluginSpec extends FunSpec with BeforeAndAfter with BeforeA
   }
 
   describe("invalid config") {
+    it("invalid id_column") {
+      val yml =
+        s"""
+           |in:
+           |  type: dummy
+           |  data: "1,test1,170.1|2,test2,170.2"
+           |  columns:
+           |  - {name: id, type: long}
+           |  - {name: name, type: string}
+           |  - {name: height, type: double}
+           |out:
+           |  type: couchbase
+           |  bucket: $bucketName
+           |  id_column: invalid
+           |  id_format: embulk_invalid_{id}
+        """.stripMargin
+
+      val thrown = intercept[PartialExecutionException] {
+        EmbulkPluginTester.run(yml)
+      }
+      assert(thrown.getMessage === """org.embulk.config.ConfigException: Invalid id_column 'invalid'. not found.""")
+    }
+
     it("invalid id_format") {
       val yml =
         s"""
@@ -197,7 +220,7 @@ class CouchbaseOutputPluginSpec extends FunSpec with BeforeAndAfter with BeforeA
   private[this] def assertDocument(id: String, expected: Map[String, Any]): Unit = {
     val document = bucket.get(id)
     expected.foreach { case (k, v) =>
-      assert(document.content().get(k) === v, s"id=$id")
+      assert(document.content().get(k) === v, s"id=$id, name=$k, value=$v")
     }
   }
 }
