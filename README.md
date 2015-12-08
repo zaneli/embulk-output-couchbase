@@ -38,7 +38,8 @@ $ ./gradlew gem  # -t to watch change of files and rebuild continuously
 
 ## Test
 
-Start Couchbase Server on the localhost, and prepare 'embulk_spec' bucket without password.
+Start Couchbase Server on the localhost and prepare 'embulk_spec' bucket without password,  
+or modify src/test/resources/env.conf file for adjust your environment.
 
 ```
 $ ./gradlew test

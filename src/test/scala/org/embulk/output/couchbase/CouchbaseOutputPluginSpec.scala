@@ -2,6 +2,7 @@ package org.embulk.output.couchbase
 
 import com.couchbase.client.java.CouchbaseCluster
 import org.embulk.exec.PartialExecutionException
+import org.embulk.output.couchbase.EnvConfig.{Bucket => bucketName}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}
 
 import scala.collection.mutable.ListBuffer
@@ -9,10 +10,12 @@ import scala.util.control.Exception.ignoring
 
 class CouchbaseOutputPluginSpec extends FunSpec with BeforeAndAfter with BeforeAndAfterAll {
 
-  private[this] val bucketName = "embulk_spec"
-
-  private[this] lazy val cluster = CouchbaseCluster.create()
-  private[this] lazy val bucket = cluster.openBucket(bucketName)
+  private[this] lazy val cluster = {
+    EnvConfig.Host.fold(CouchbaseCluster.create())(CouchbaseCluster.create(_))
+  }
+  private[this] lazy val bucket = {
+    EnvConfig.Password.fold(cluster.openBucket(bucketName))(cluster.openBucket(bucketName, _))
+  }
 
   private[this] val ids = ListBuffer.empty[String]
 
