@@ -5,7 +5,7 @@ import java.util.{List => JList}
 import org.embulk.config.{ConfigDiff, ConfigSource, TaskReport, TaskSource}
 import org.embulk.spi.{Exec, OutputPlugin, Schema, TransactionalPageOutput}
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 class CouchbaseOutputPlugin extends OutputPlugin {
 
@@ -13,7 +13,7 @@ class CouchbaseOutputPlugin extends OutputPlugin {
     config: ConfigSource, schema: Schema, taskCount: Int, control: OutputPlugin.Control): ConfigDiff = {
     val task = config.loadConfig(classOf[PluginTask])
     CouchbaseTask.checkConfig(task, schema)
-    control.run(task.dump()).asScala.foldLeft(Exec.newConfigDiff())(_.merge(_))
+    control.run(task.dump).foldLeft(Exec.newConfigDiff)(_.merge(_))
   }
 
   override def resume(

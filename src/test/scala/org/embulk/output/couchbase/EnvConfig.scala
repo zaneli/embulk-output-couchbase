@@ -1,20 +1,21 @@
 package org.embulk.output.couchbase
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 
 object EnvConfig {
-
   private[this] val config = ConfigFactory.load("env")
 
-  val Host = getNonEmptyValue("host")
+  val Host = config.getNonEmptyStringOpt("host")
   val Bucket = config.getString("bucket")
-  val Password = getNonEmptyValue("password")
+  val Password = config.getNonEmptyStringOpt("password")
 
-  private[this] def getNonEmptyValue(path: String): Option[String] = {
-    if (config.hasPath(path)) {
-      Option(config.getString(path)).filter(_.nonEmpty)
-    } else {
-      None
+  implicit class RichConfig(val underlying: Config) extends AnyVal {
+    def getNonEmptyStringOpt(path: String): Option[String] = {
+      if (underlying.hasPath(path)) {
+        Option(underlying.getString(path)).filter(_.nonEmpty)
+      } else {
+        None
+      }
     }
   }
 }

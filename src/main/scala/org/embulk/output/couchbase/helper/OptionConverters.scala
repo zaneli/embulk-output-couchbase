@@ -7,7 +7,7 @@ object OptionConverters {
 
   implicit class Optional2Option[A](val underlying: Optional[A]) extends AnyVal {
     def asScala: Option[A] = PartialFunction.condOpt(underlying) {
-      case o if o.isPresent => o.get()
+      case o if o.isPresent => o.get
     }
   }
 }

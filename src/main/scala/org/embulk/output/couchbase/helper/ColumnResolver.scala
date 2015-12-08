@@ -15,7 +15,7 @@ class ColumnResolver(idColumn: String, idFormat: Option[String]) {
       val content = columns
         .filterNot(_ == idColumn)
         .flatMap(ColumnValue.resolve(reader, _))
-        .foldLeft(JsonObject.create()){ case (j, c) => j.put(c.name, c.value) }
+        .foldLeft(JsonObject.create){ case (j, c) => j.put(c.name, c.value) }
       JsonDocument.create(toId(id), content)
     }
   }

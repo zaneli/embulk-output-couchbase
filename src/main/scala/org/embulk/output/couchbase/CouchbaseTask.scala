@@ -4,8 +4,6 @@ import com.google.common.base.Optional
 import org.embulk.config.{Config, ConfigDefault, ConfigException, Task}
 import org.embulk.spi.Schema
 
-import scala.collection.JavaConversions._
-
 trait PluginTask extends Task {
   @Config("host")
   @ConfigDefault("null")
@@ -39,6 +37,7 @@ case class CouchbaseTask(
 
 object CouchbaseTask {
   import org.embulk.output.couchbase.helper.OptionConverters._
+  import scala.collection.JavaConversions._
 
   def apply(task: PluginTask): CouchbaseTask = {
     CouchbaseTask(

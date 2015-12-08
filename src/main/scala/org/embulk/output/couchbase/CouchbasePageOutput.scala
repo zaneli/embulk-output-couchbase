@@ -57,6 +57,6 @@ class CouchbasePageOutput(task: CouchbaseTask, schema: Schema) extends Transacti
   override def abort(): Unit = {}
 
   override def commit(): TaskReport = {
-    createReport(successCount.longValue(), failures.toMap)
+    createReport(successCount.longValue, failures.toMap)
   }
 }
